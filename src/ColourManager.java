@@ -1,3 +1,5 @@
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
 import processing.core.PApplet;
 import processing.core.PImage;
 
@@ -10,19 +12,20 @@ public class ColourManager {
   // TODO implement iterable
 
   PApplet parent;
-  PImage img;
+  Image img;
+  PixelReader reader;
   ArrayList colours;
   
-  public ColourManager(PApplet parent, String filename, int w, int h) {
+  public ColourManager(String filename, int w, int h) {
     this.parent = parent;
-    img = parent.loadImage(filename);
-    img.resize(w, h);
-    
+    img = new Image(filename, w, h, false, false);
+    reader = img.getPixelReader();
+
     colours = new ArrayList();
     
     for (int i=0; i<w; i++) {
       for (int j=0; j<h; j++) {
-        int c = img.get(i, j);
+        int c = reader.getArgb(i, j);
         colours.add(c);
       }
     }

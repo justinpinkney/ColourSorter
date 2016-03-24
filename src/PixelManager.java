@@ -1,3 +1,6 @@
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import processing.core.PApplet;
 
 import java.util.ArrayList;
@@ -6,17 +9,17 @@ import static javafx.scene.paint.Color.color;
 
 public class PixelManager {
 
-  PApplet parent;
 
   // Use a list because we will be doing lots of iteration
   ArrayList<Pixel> availables = new ArrayList<Pixel>();
   Pixel[][] pixelGrid;
   int w, h;
+  WritableImage img;
   
-  public PixelManager(PApplet parent, int w, int h, DistanceMetric metric){
-    this.parent = parent;
+  public PixelManager(int w, int h, DistanceMetric metric){
     // Initialise grid of empty pixels
     pixelGrid = new Pixel[w][h];
+    img = new WritableImage(w, h);
     this.w = w;
     this.h = h;
     for (int i=0; i<w; i++) {
@@ -52,34 +55,35 @@ public class PixelManager {
     }
   }
   
-  public void render() {
+  public Image render() {
+    PixelWriter writer = img.getPixelWriter();
     for (int i=0; i<w; i++) {
       for (int j=0; j<h; j++) {
         int c = pixelGrid[i][j].c;
-        parent.stroke(c);
-        parent.point(i,j);
+        writer.setArgb(i, j, c);
       }
     }
+      return img;
   }
   
-  public void renderDebug() {
-    for (int i=0; i<w; i++) {
-      for (int j=0; j<h; j++) {
-        switch (pixelGrid[i][j].state) {
-          case EMPTY:
-            parent.stroke(parent.color(0));
-            break;
-          case AVAILABLE:
-            parent.stroke(parent.color(255,0,0));
-            break;
-          case FILLED:
-            parent.stroke((int) pixelGrid[i][j].c);
-            break;
-        }
-        parent.point(i,j);
-      }
-    }
-  }
+//  public void renderDebug() {
+//    for (int i=0; i<w; i++) {
+//      for (int j=0; j<h; j++) {
+//        switch (pixelGrid[i][j].state) {
+//          case EMPTY:
+//            parent.stroke(parent.color(0));
+//            break;
+//          case AVAILABLE:
+//            parent.stroke(parent.color(255,0,0));
+//            break;
+//          case FILLED:
+//            parent.stroke((int) pixelGrid[i][j].c);
+//            break;
+//        }
+//        parent.point(i,j);
+//      }
+//    }
+//  }
   
   public void placeColour(int c) {
         // check the min diff for each available space
