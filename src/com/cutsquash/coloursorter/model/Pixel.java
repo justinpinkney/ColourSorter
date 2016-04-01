@@ -1,3 +1,5 @@
+package com.cutsquash.coloursorter.model;
+
 import java.util.ArrayList;
 
 class Pixel {
@@ -14,7 +16,7 @@ class Pixel {
   public Pixel(PixelManager manager,
                 DistanceMetric metric, 
                 int i, int j) {
-    // Create a new empty Pixel object
+    // Create a new empty com.cutsquash.coloursorter.model.Pixel object
     this.state = State.EMPTY;
     this.location[0] = i;
     this.location[1] = j;
@@ -92,7 +94,7 @@ class Pixel {
   public boolean equals(Object obj) {
     //if (obj == null) return false;
     //if (obj == this) return true;
-    //if (!(obj instanceof Pixel)) return false;
+    //if (!(obj instanceof com.cutsquash.coloursorter.model.Pixel)) return false;
     Pixel o = (Pixel) obj;
     return o == this;
   }

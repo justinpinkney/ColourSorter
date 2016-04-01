@@ -1,7 +1,8 @@
+package com.cutsquash.coloursorter.model;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import processing.core.PApplet;
 
 import java.util.ArrayList;
 

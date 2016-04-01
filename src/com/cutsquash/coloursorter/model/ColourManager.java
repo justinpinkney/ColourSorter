@@ -1,8 +1,7 @@
+package com.cutsquash.coloursorter.model;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
-import processing.core.PApplet;
-import processing.core.PImage;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -11,13 +10,11 @@ import static processing.core.PApplet.println;
 public class ColourManager {
   // TODO implement iterable
 
-  PApplet parent;
   Image img;
   PixelReader reader;
   ArrayList colours;
   
   public ColourManager(String filename, int w, int h) {
-    this.parent = parent;
     img = new Image(filename, w, h, false, false);
     reader = img.getPixelReader();
 
@@ -29,7 +26,6 @@ public class ColourManager {
         colours.add(c);
       }
     }
-    println(colours.size());
     Collections.shuffle(colours);
   }
   

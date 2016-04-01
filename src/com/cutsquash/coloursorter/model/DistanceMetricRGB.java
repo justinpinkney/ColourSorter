@@ -1,4 +1,6 @@
-class DistanceMetricRGB implements DistanceMetric {
+package com.cutsquash.coloursorter.model;
+
+public class DistanceMetricRGB implements DistanceMetric {
 
   public DistanceMetricRGB() {}
   
