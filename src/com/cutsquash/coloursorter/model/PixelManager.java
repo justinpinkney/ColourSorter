@@ -4,9 +4,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
-import static javafx.scene.paint.Color.color;
 
 public class PixelManager {
 
@@ -15,12 +14,12 @@ public class PixelManager {
   ArrayList<Pixel> availables = new ArrayList<Pixel>();
   Pixel[][] pixelGrid;
   int w, h;
-  WritableImage img;
+  BufferedImage img;
   
   public PixelManager(int w, int h, DistanceMetric metric){
     // Initialise grid of empty pixels
     pixelGrid = new Pixel[w][h];
-    img = new WritableImage(w, h);
+    img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
     this.w = w;
     this.h = h;
     for (int i=0; i<w; i++) {
@@ -56,12 +55,11 @@ public class PixelManager {
     }
   }
   
-  public Image render() {
-    PixelWriter writer = img.getPixelWriter();
+  public BufferedImage render() {
     for (int i=0; i<w; i++) {
       for (int j=0; j<h; j++) {
         int c = pixelGrid[i][j].c;
-        writer.setArgb(i, j, c);
+        img.setRGB(i, j, c);
       }
     }
       return img;
