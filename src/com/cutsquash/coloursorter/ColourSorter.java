@@ -4,10 +4,7 @@ import com.cutsquash.coloursorter.model.ColourManager;
 import com.cutsquash.coloursorter.model.DistanceMetricRGB;
 import com.cutsquash.coloursorter.model.PixelManager;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -20,9 +17,6 @@ public class ColourSorter extends Application {
 
     PixelManager manager;
     ColourManager cManager;
-    PImage img;
-    ArrayList colours;
-    int startT;
 
     public static void main(String[] args) {
         launch(args);
@@ -30,15 +24,6 @@ public class ColourSorter extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Add the button
-        Button btn = new Button();
-        btn.setText("Hello");
-        btn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Hello");
-            }
-        });
 
         // Add an image
         int width = 300;
@@ -51,20 +36,11 @@ public class ColourSorter extends Application {
         }
         cManager = new ColourManager("file:///C:\\Software\\Github\\ColourSorter\\data\\im (5).JPG", width, height);
 
-        while (true) {
-            if (cManager.hasNextColour()) {
-                int c = cManager.getNextColour();
-                manager.placeColour(c);
-            } else {
-                img = manager.render();
-                break;
-            }
-
-        }
+        for (int c : cManager) manager.placeColour(c);
+        img = manager.render();
 
 
         VBox root = new VBox();
-        root.getChildren().add(btn);
         ImageView imView = new ImageView(img);
         root.getChildren().add(imView);
 

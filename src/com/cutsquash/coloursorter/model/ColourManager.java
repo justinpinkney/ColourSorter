@@ -4,11 +4,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 import static processing.core.PApplet.println;
 
-public class ColourManager {
-  // TODO implement iterable
+public class ColourManager implements Iterable<Integer>{
 
   Image img;
   PixelReader reader;
@@ -28,19 +28,9 @@ public class ColourManager {
     }
     Collections.shuffle(colours);
   }
-  
-  public boolean hasNextColour() {
-    if (colours.size() == 0) {
-      return false;
-    } else {
-      return true;
-    }
-  }
-  
-  public int getNextColour() {
-      int c = (Integer) colours.get(0);
-      colours.remove(0);
-      return c;
-  }
 
+  @Override
+  public Iterator<Integer> iterator() {
+    return colours.iterator();
+  }
 }
