@@ -19,8 +19,10 @@ public class ColourManager implements Iterable<Integer>{
 
     BufferedImage img;
     ArrayList colours;
+    ColourShuffleStrategy shuffler;
 
-    public ColourManager(String filename, int w, int h) {
+    public ColourManager(String filename, int w, int h, ColourShuffleStrategy shuffler) {
+        this.shuffler = shuffler;
         BufferedImage originalImage = null;
         try {
             originalImage = ImageIO.read(new File(filename));
@@ -41,7 +43,7 @@ public class ColourManager implements Iterable<Integer>{
                 colours.add(c);
             }
         }
-        Collections.shuffle(colours);
+        shuffler.shuffle(colours);
     }
 
     @Override

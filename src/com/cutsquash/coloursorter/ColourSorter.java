@@ -3,7 +3,7 @@ package com.cutsquash.coloursorter;
 import com.cutsquash.coloursorter.model.ColourManager;
 import com.cutsquash.coloursorter.model.DistanceMetricRGB;
 import com.cutsquash.coloursorter.model.PixelManager;
-import javafx.scene.image.Image;
+import com.cutsquash.coloursorter.model.ShuffleStrategies;
 import org.docopt.Docopt;
 
 import javax.imageio.ImageIO;
@@ -51,7 +51,7 @@ public class ColourSorter {
         for (int i = 0; i < width; i++) {
             manager.setAvailable(0, 0);
         }
-        ColourManager cManager = new ColourManager(filename, width, height);
+        ColourManager cManager = new ColourManager(filename, width, height, new ShuffleStrategies.Sorter());
 
         for (int c : cManager) manager.placeColour(c);
 
@@ -59,7 +59,7 @@ public class ColourSorter {
 
         try {
             File outputfile = new File("saved.png");
-            ImageIO.write((RenderedImage) img, "png", outputfile);
+            ImageIO.write(img, "png", outputfile);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
