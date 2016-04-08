@@ -54,7 +54,7 @@ public class ColourSorter {
                         ColourShuffleStrategy shuffler) {
 
         manager = new PixelManager(width, height, distanceMetric);
-        cManager = new ColourManager(filename, width, height,shuffler);
+        cManager = new ColourManager(filename, width, height, shuffler);
     }
 
 
@@ -63,8 +63,8 @@ public class ColourSorter {
                         String filename) {
 
         this(width, height, filename,
-                new DistanceMetricRGB(),
-                new ShuffleStrategies.Sorter());
+                new DistanceMetricHSB(),
+                new ShuffleStrategies.Shuffler());
     }
 
     public void run() {
