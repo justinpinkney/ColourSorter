@@ -13,7 +13,7 @@ public class PixelManager {
   // Use a list because we will be doing lots of iteration
   ArrayList<Pixel> availables = new ArrayList<Pixel>();
   Pixel[][] pixelGrid;
-  int w, h;
+  public int w, h;
   BufferedImage img;
   
   public PixelManager(int w, int h, DistanceMetric metric){

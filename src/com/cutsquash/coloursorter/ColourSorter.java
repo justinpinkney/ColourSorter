@@ -1,9 +1,6 @@
 package com.cutsquash.coloursorter;
 
-import com.cutsquash.coloursorter.model.ColourManager;
-import com.cutsquash.coloursorter.model.DistanceMetricRGB;
-import com.cutsquash.coloursorter.model.PixelManager;
-import com.cutsquash.coloursorter.model.ShuffleStrategies;
+import com.cutsquash.coloursorter.model.*;
 import org.docopt.Docopt;
 
 import javax.imageio.ImageIO;
@@ -18,40 +15,63 @@ import java.util.Map;
  */
 public class ColourSorter {
 
+    PixelManager manager;
+    ColourManager cManager;
+
     private static final String doc =
         "Colour Sorter.\n"
                 + "\n"
                 + "Usage:\n"
-                + "  ColourSorter <x> <y> <file> [ --output=<outputFile> ]\n"
+                + "  ColourSorter <x> <y> <file>"
+                    // Options
+                    + " [ --output=<outputFile>"
+                    +   " --sort=<sortMethod> ]\n"
                 + "  ColourSorter (-h | --help)\n"
                 + "  ColourSorter --version\n"
                 + "\n"
                 + "Options:\n"
                 + "  -h --help     Show this screen.\n"
                 + "  --version     Show version.\n"
-                + "  --speed=<kn>  Speed in knots [default: 10].\n"
-                + "  --moored      Moored (anchored) mine.\n"
-                + "  --drifting    Drifting mine.\n"
+                + "  --output=<outputFile>  Output file location.\n"
+                + "  --sort=<sortMethod>  Original pixel colour sort method.\n"
                 + "\n";
 
     public static void main(String[] args) {
         Map<String, Object> opts =
             new Docopt(doc).withVersion("Colour Sorter 1.0").parse(args);
         System.out.println(opts);
-        ColourSorter sorter = new ColourSorter();
-        sorter.run(
-                Integer.parseInt((String) opts.get("<x>")),
-                Integer.parseInt((String) opts.get("<y>")),
-                (String) opts.get("<file>"));
+        int x = Integer.parseInt((String) opts.get("<x>"));
+        int y = Integer.parseInt((String) opts.get("<y>"));
+        String inputFile = (String) opts.get("<file>");
+        ColourSorter sorter = new ColourSorter(x, y, inputFile);
+        sorter.run();
     }
 
-    public void run(int width, int height, String filename) {
+    public ColourSorter(int width,
+                        int height,
+                        String filename,
+                        DistanceMetric distanceMetric,
+                        ColourShuffleStrategy shuffler) {
 
-        PixelManager manager = new PixelManager(width, height, new DistanceMetricRGB());
-        for (int i = 0; i < width; i++) {
+        manager = new PixelManager(width, height, distanceMetric);
+        cManager = new ColourManager(filename, width, height,shuffler);
+    }
+
+
+    public ColourSorter(int width,
+                        int height,
+                        String filename) {
+
+        this(width, height, filename,
+                new DistanceMetricRGB(),
+                new ShuffleStrategies.Sorter());
+    }
+
+    public void run() {
+
+        for (int i = 0; i < manager.w; i++) {
             manager.setAvailable(0, 0);
         }
-        ColourManager cManager = new ColourManager(filename, width, height, new ShuffleStrategies.Sorter());
 
         for (int c : cManager) manager.placeColour(c);
 
