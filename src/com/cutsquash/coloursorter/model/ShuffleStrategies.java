@@ -2,6 +2,7 @@ package com.cutsquash.coloursorter.model;
 
 import com.cutsquash.coloursorter.Utils;
 
+import java.awt.*;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -23,6 +24,27 @@ public class ShuffleStrategies {
         @Override
         public void shuffle(List list) {
             Collections.sort(list);
+        }
+    }
+
+    public static class RSorter implements ColourShuffleStrategy {
+        @Override
+        public void shuffle(List list) {
+            Collections.sort(list, new RgbComparater(0));
+        }
+    }
+
+    public static class GSorter implements ColourShuffleStrategy {
+        @Override
+        public void shuffle(List list) {
+            Collections.sort(list, new RgbComparater(1));
+        }
+    }
+
+    public static class BSorter implements ColourShuffleStrategy {
+        @Override
+        public void shuffle(List list) {
+            Collections.sort(list, new RgbComparater(3));
         }
     }
 
@@ -83,6 +105,20 @@ public class ShuffleStrategies {
         @Override
         public int compare(Integer c1, Integer c2) {
             return (int) Math.signum(Utils.rgb2hsb(c1)[channel] - Utils.rgb2hsb(c2)[channel]);
+        }
+    }
+
+    private static class RgbComparater implements Comparator<Integer> {
+
+        int channel;
+
+        RgbComparater(int channel) {
+            this.channel = channel;
+        }
+
+        @Override
+        public int compare(Integer c1, Integer c2) {
+            return (int) Math.signum(Utils.getRgb(c1)[channel] - Utils.getRgb(c2)[channel]);
         }
     }
 
