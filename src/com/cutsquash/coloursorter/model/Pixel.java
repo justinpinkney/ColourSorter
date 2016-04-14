@@ -92,9 +92,6 @@ class Pixel {
   }
   
   public boolean equals(Object obj) {
-    //if (obj == null) return false;
-    //if (obj == this) return true;
-    //if (!(obj instanceof com.cutsquash.coloursorter.model.Pixel)) return false;
     Pixel o = (Pixel) obj;
     return o == this;
   }

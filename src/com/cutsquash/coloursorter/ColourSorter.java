@@ -76,7 +76,8 @@ public class ColourSorter {
 //            manager.setAvailable(manager.w - i - 1, 0);
 //        }
 
-        manager.setAvailable(round(manager.w/2), round(manager.w/2));
+//        manager.setAvailable(round(manager.w/2), round(manager.w/2));
+        manager.setAvailable(0, 0);
 
         for (int c : cManager) manager.placeColour(c);
 
