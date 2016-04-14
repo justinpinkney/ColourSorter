@@ -65,10 +65,10 @@ public class ColourSorter {
 
         this(width, height, filename,
                 new DistanceMetricHSB(),
-                new ShuffleStrategies.Randomiser(
-                        new ShuffleStrategies.BrightnessSorter(),
-                        0.1
-                )
+//                new ShuffleStrategies.Randomiser(
+                        new ShuffleStrategies.BrightnessSorter()
+//                        ,0.2
+//                )
             );
     }
 
@@ -79,7 +79,13 @@ public class ColourSorter {
 //        }
 
 //        manager.setAvailable(round(manager.w/2), round(manager.w/2));
-        manager.setAvailable(0, 0);
+//        manager.setAvailableLine(0, 0, manager.w, manager.h);
+        manager.setAvailableLine(0, 0, 0, manager.h - 1);
+        manager.setAvailableLine(0, manager.h - 1, manager.w - 1, manager.h - 1);
+        manager.setAvailableLine(manager.w - 1, manager.h - 1, manager.w - 1, 0);
+        manager.setAvailableLine(manager.w - 1, 0, 0, 0);
+
+//        manager.setAvailableRandom(100);
 
         for (int c : cManager) manager.placeColour(c);
 
