@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import static java.lang.Math.round;
+
 /**
  * Created by jnp1 on 05/04/2016.
  */
@@ -64,14 +66,17 @@ public class ColourSorter {
 
         this(width, height, filename,
                 new DistanceMetricHSB(),
-                new ShuffleStrategies.Shuffler());
+                new ShuffleStrategies.HsbSorter()
+            );
     }
 
     public void run() {
 
-        for (int i = 0; i < manager.w; i++) {
-            manager.setAvailable(0, 0);
-        }
+//        for (int i = 0; i < manager.w; i++) {
+//            manager.setAvailable(manager.w - i - 1, 0);
+//        }
+
+        manager.setAvailable(round(manager.w/2), round(manager.w/2));
 
         for (int c : cManager) manager.placeColour(c);
 

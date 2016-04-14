@@ -18,7 +18,7 @@ import static java.awt.Image.SCALE_DEFAULT;
 public class ColourManager implements Iterable<Integer>{
 
     BufferedImage img;
-    ArrayList colours;
+    ArrayList<Integer> colours;
     ColourShuffleStrategy shuffler;
 
     public ColourManager(String filename, int w, int h, ColourShuffleStrategy shuffler) {
@@ -35,7 +35,7 @@ public class ColourManager implements Iterable<Integer>{
             System.out.println(e.getMessage());
         }
 
-        colours = new ArrayList();
+        colours = new ArrayList<Integer>();
 
         for (int i=0; i<w; i++) {
             for (int j=0; j<h; j++) {
