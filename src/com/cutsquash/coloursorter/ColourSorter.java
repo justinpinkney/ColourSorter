@@ -5,7 +5,6 @@ import org.docopt.Docopt;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -66,7 +65,10 @@ public class ColourSorter {
 
         this(width, height, filename,
                 new DistanceMetricHSB(),
-                new ShuffleStrategies.HsbSorter()
+                new ShuffleStrategies.Randomiser(
+                        new ShuffleStrategies.BrightnessSorter(),
+                        0.1
+                )
             );
     }
 
