@@ -9,3 +9,10 @@ resolution = (1920, 1080)
 
 file_directory = 'root_directory'
 files = ('im1.jpg', 'etc')
+
+# Pick random options
+for key in options.keys():
+	selected_options[key] = random.choice(options[key])
+# Pick a random file
+# Pick a new filename, and save settings to a text file
+# Run the colour sorter
