@@ -51,4 +51,4 @@ Temporary Items
 # Intellij stuff
 # =========================
 
-workspace.xml
+.idea/workspace.xml
