@@ -44,7 +44,7 @@ public class ShuffleStrategies {
     public static class BSorter implements ColourShuffleStrategy {
         @Override
         public void shuffle(List list) {
-            Collections.sort(list, new RgbComparater(3));
+            Collections.sort(list, new RgbComparater(2));
         }
     }
 

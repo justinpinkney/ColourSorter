@@ -56,7 +56,7 @@ public class ColourSorter {
 
         // Options
         String outputFile = (String) opts.get("--output");
-        double randFactor = Integer.parseInt((String) opts.get("--random"));
+        double randFactor = Double.parseDouble((String) opts.get("--random"));
         ColourShuffleStrategy shuffler = parseShuffler((String) opts.get("--sort"));
         DistanceMetric metric = parseMetric((String) opts.get("--distance"));
 
