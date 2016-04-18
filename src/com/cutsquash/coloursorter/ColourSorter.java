@@ -60,9 +60,11 @@ public class ColourSorter {
         double randFactor = Double.parseDouble((String) opts.get("--random"));
         ColourShuffleStrategy shuffler = parseShuffler((String) opts.get("--sort"), randFactor);
         DistanceMetric metric = parseMetric((String) opts.get("--distance"));
+        String preset = (String) opts.get("--preset");
 
         // Set up and run
-        ColourSorter sorter = new ColourSorter(x, y, inputFile, metric, shuffler, outputFile);
+        ColourSorter sorter = new ColourSorter(x, y, inputFile,
+                                                metric, shuffler, outputFile, preset);
         sorter.run();
     }
 
@@ -71,10 +73,14 @@ public class ColourSorter {
                         String filename,
                         DistanceMetric distanceMetric,
                         ColourShuffleStrategy shuffler,
-                        String outputFilename) {
+                        String outputFilename,
+                        String preset) {
 
         manager = new PixelManager(width, height, distanceMetric);
         cManager = new ColourManager(filename, width, height, shuffler);
+        if (preset.length()>0) {
+            this.applyPreset(preset);
+        }
         this.outputFilename = outputFilename;
     }
 
@@ -88,22 +94,11 @@ public class ColourSorter {
                         new ShuffleStrategies.BrightnessSorter()
                         ,0.2
                 ),
-                "output.png"
+                "output.png", ""
             );
     }
 
     public void run() {
-
-//        for (int i = 0; i < manager.w; i++) {
-//            manager.setAvailable(manager.w - i - 1, 0);
-//        }
-
-//        manager.setAvailable(round(manager.w/2), round(manager.w/2));
-//        manager.setAvailableLine(0, 0, manager.w, manager.h);
-
-//        manager.setAvailableRandom(100);
-
-        availableBorder(manager);
 
         for (int c : cManager) manager.placeColour(c);
 
@@ -116,6 +111,31 @@ public class ColourSorter {
             System.out.println(e.getMessage());
         }
 
+    }
+
+    private void applyPreset(String preset) {
+        switch (preset) {
+            case "Centre":
+                manager.setAvailable(manager.w/2, manager.h/2);
+                break;
+            case "Corner":
+                manager.setAvailable(0, 0);
+                break;
+            case "Border":
+                manager.setAvailableLine(0, 0, 0, manager.h - 1);
+                manager.setAvailableLine(0, manager.h - 1, manager.w - 1, manager.h - 1);
+                manager.setAvailableLine(manager.w - 1, manager.h - 1, manager.w - 1, 0);
+                manager.setAvailableLine(manager.w - 1, 0, 0, 0);
+                break;
+            case "Diagonal":
+                manager.setAvailableLine(0, 0, manager.w, manager.h);
+                break;
+            case "Random":
+                manager.setAvailableRandom(10);
+                break;
+            default:
+                System.out.println("Unrecognised preset");
+        }
     }
 
 
@@ -169,22 +189,5 @@ public class ColourSorter {
         }
         return metric;
     }
-
-//    private static parsePreset(String optionString) {
-//
-//    }
-
-    // Availability presets ////////////////////////////////////////////////////////////////////////////////////////////
-    public static void availableBorder(PixelManager m) {
-        m.setAvailableLine(0, 0, 0, m.h - 1);
-        m.setAvailableLine(0, m.h - 1, m.w - 1, m.h - 1);
-        m.setAvailableLine(m.w - 1, m.h - 1, m.w - 1, 0);
-        m.setAvailableLine(m.w - 1, 0, 0, 0);
-    }
-
-    public static void availableDiagonal(PixelManager m) {
-        m.setAvailableLine(0, 0, m.w, m.h);
-    }
-
 
 }

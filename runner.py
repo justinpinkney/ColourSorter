@@ -6,14 +6,28 @@ options = {
 	'--sort': ('R', 'G', 'B', 'Hue', 'Saturation', 'Brightness', 'Shuffle'),
 	'--random': (0, 0.01, 0.05, 0.1),
 	# '--distance': ('RGB', 'HSB'),
-	# '--preset': ('Centre', 'Corner', 'Border', 'Diagonal', 'Random'),
+	'--preset': ('Centre', 'Corner', 'Border', 'Diagonal', 'Random'),
 }
 
-resolutionX = 200
-resolutionY = 200
+resolutionX = 1920
+resolutionY = 1080
 
-file_directory = "C:\\Users\\Justin\\Documents\\Development\\Github\\ColourSorter\\data\\"
-files = ("im (5).JPG", "saved.png")
+away = False
+
+if away:
+	java_folder = "C:\\Software\\GitHub\\ColourSorter\\out\\production\\ColourSorter"
+	file_directory = "C:\\Software\\GitHub\\ColourSorter\\data\\"
+else:
+	java_folder = "C:\\Users\\Justin\\Documents\\Development\\Github\\ColourSorter\\out\\production\\ColourSorter"
+	file_directory = "C:\\Users\\Justin\\Pictures\\fancy photos\\portfolio\\"
+
+all_files = os.listdir(file_directory)
+file_types = ["jpg", "png", "tiff"]
+files = []
+for this_file in all_files:
+	if any(ext in this_file.lower() for ext in file_types):
+		files.append(this_file)
+
 
 n_runs = 10
 
@@ -52,7 +66,7 @@ for run in range(n_runs):
 		record_file.write('\n')
 	# Run the colour sorter
 	print(run_command)
-	os.chdir("C:\\Users\\Justin\\Documents\\Development\\Github\\ColourSorter\\out\\production\\ColourSorter")
+	os.chdir(java_folder)
 	
 	out = subprocess.check_output(run_command)
 	print(out)
