@@ -4,7 +4,7 @@ import os
 
 options = {
 	'--sort': ('R', 'G', 'B', 'Hue', 'Saturation', 'Brightness', 'Shuffle'),
-	# '--random': (0, 0.05, 0.1, 0.2, 0.4, 0.8),
+	'--random': (0, 0.01, 0.05, 0.1),
 	# '--distance': ('RGB', 'HSB'),
 	# '--preset': ('Centre', 'Corner', 'Border', 'Diagonal', 'Random'),
 }
@@ -48,7 +48,7 @@ for run in range(n_runs):
 		record_file.write(out_file)
 		record_file.write('\t')
 		for item in run_command:
-			record_file.write(item)
+			record_file.write(item + ' ')
 		record_file.write('\n')
 	# Run the colour sorter
 	print(run_command)

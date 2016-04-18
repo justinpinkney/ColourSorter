@@ -18,6 +18,7 @@ public class ColourSorter {
 
     PixelManager manager;
     ColourManager cManager;
+    String outputFilename;
 
     private static final String doc =
         "Colour Sorter.\n"
@@ -57,11 +58,11 @@ public class ColourSorter {
         // Options
         String outputFile = (String) opts.get("--output");
         double randFactor = Double.parseDouble((String) opts.get("--random"));
-        ColourShuffleStrategy shuffler = parseShuffler((String) opts.get("--sort"));
+        ColourShuffleStrategy shuffler = parseShuffler((String) opts.get("--sort"), randFactor);
         DistanceMetric metric = parseMetric((String) opts.get("--distance"));
 
         // Set up and run
-        ColourSorter sorter = new ColourSorter(x, y, inputFile, metric, shuffler);
+        ColourSorter sorter = new ColourSorter(x, y, inputFile, metric, shuffler, outputFile);
         sorter.run();
     }
 
@@ -69,10 +70,12 @@ public class ColourSorter {
                         int height,
                         String filename,
                         DistanceMetric distanceMetric,
-                        ColourShuffleStrategy shuffler) {
+                        ColourShuffleStrategy shuffler,
+                        String outputFilename) {
 
         manager = new PixelManager(width, height, distanceMetric);
         cManager = new ColourManager(filename, width, height, shuffler);
+        this.outputFilename = outputFilename;
     }
 
     public ColourSorter(int width,
@@ -84,7 +87,8 @@ public class ColourSorter {
                 new ShuffleStrategies.Randomiser(
                         new ShuffleStrategies.BrightnessSorter()
                         ,0.2
-                )
+                ),
+                "output.png"
             );
     }
 
@@ -106,7 +110,7 @@ public class ColourSorter {
         BufferedImage img = manager.render();
 
         try {
-            File outputfile = new File("saved.png");
+            File outputfile = new File(outputFilename);
             ImageIO.write(img, "png", outputfile);
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -115,7 +119,7 @@ public class ColourSorter {
     }
 
 
-    private static ColourShuffleStrategy parseShuffler(String optionString) {
+    private static ColourShuffleStrategy parseShuffler(String optionString, double randFactor) {
         ColourShuffleStrategy shuffler = new ShuffleStrategies.Shuffler();
         switch (optionString) {
             case "R":
@@ -143,6 +147,10 @@ public class ColourSorter {
                 System.out.println("Unrecognised strategy");
                 break;
         }
+        if (randFactor > 0) {
+            // wrap in a randomiser
+            shuffler = new ShuffleStrategies.Randomiser(shuffler, randFactor);
+        }
         return shuffler;
     }
 
@@ -161,6 +169,10 @@ public class ColourSorter {
         }
         return metric;
     }
+
+//    private static parsePreset(String optionString) {
+//
+//    }
 
     // Availability presets ////////////////////////////////////////////////////////////////////////////////////////////
     public static void availableBorder(PixelManager m) {

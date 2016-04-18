@@ -32,7 +32,7 @@ public class ColourManager implements Iterable<Integer>{
             g.drawImage(originalImage, 0, 0, w, h, null);
             g.dispose();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println(e.getMessage() + filename);
         }
 
         colours = new ArrayList<Integer>();
