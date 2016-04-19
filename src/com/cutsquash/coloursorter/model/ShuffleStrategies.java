@@ -93,6 +93,22 @@ public class ShuffleStrategies {
         }
     }
 
+    public static class Reverser implements ColourShuffleStrategy {
+
+        ColourShuffleStrategy initialStrategy;
+
+        public Reverser(ColourShuffleStrategy initialStrategy) {
+            this.initialStrategy = initialStrategy;
+        }
+
+        @Override
+        public void shuffle(List list) {
+            // Apply the original sort method
+            initialStrategy.shuffle(list);
+            Collections.reverse(list);
+        }
+    }
+
     // Comparater //////////////////////////////////////////////////////////////////////////////////////////////////////
     private static class HsbComparater implements Comparator<Integer> {
 

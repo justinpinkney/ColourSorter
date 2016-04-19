@@ -4,9 +4,10 @@ import os
 
 options = {
 	'--sort': ('R', 'G', 'B', 'Hue', 'Saturation', 'Brightness', 'Shuffle'),
+	'--reverse': ('True', 'False')
 	'--random': (0, 0.01, 0.05, 0.1),
-	# '--distance': ('RGB', 'HSB'),
-	'--preset': ('Centre', 'Corner', 'Border', 'Diagonal', 'Random'),
+	'--distance': ('RGB', 'HSB'),
+	'--preset': ('Centre', 'Corner', 'Border', 'Diagonal', 'Random', 'Edge', 'RandomLine'),
 }
 
 resolutionX = 1920

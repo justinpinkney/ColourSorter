@@ -8,7 +8,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Random;
 
+import static java.lang.Math.random;
 import static java.lang.Math.round;
 
 /**
@@ -29,6 +31,7 @@ public class ColourSorter {
                     + " ["
                     +   " --output <outputFile>"
                     +   " --sort <sortMethod>"
+                    +   " --reverse <reverseFlag>"
                     +   " --random <randFactor>"
                     +   " --distance <metric>"
                     +   " --preset <presetName>"
@@ -37,13 +40,15 @@ public class ColourSorter {
                 + "  ColourSorter --version\n"
                 + "\n"
                 + "Options:\n"
-                + "  -h --help              Show this screen.\n"
-                + "  --version              Show version.\n"
-                + "  --output <outputFile>  Output file location.                       [default: output.png]\n"
-                + "  --sort <sortMethod>    (R|G|B|Hue|Saturation|Brightness|Shuffle)   [default: Shuffle]\n"
-                + "  --random <randFactor>  Fraction of ordered pixels to randomise.    [default: 0]\n"
-                + "  --distance <metric>    (RGB|HSB)                                   [default: RGB]\n"
-                + "  --preset <presetName>  (Centre|Corner|Border|Diagonal|Random)      [default: Centre]\n"
+                + "  -h --help                  Show this screen.\n"
+                + "  --version                  Show version.\n"
+                + "  --output <outputFile>      Output file location.                       [default: output.png]\n"
+                + "  --sort <sortMethod>        (R|G|B|Hue|Saturation|Brightness|Shuffle)   [default: Shuffle]\n"
+                + "  --reverse <reverseFlag>    Reverse the sort method?                    [default: False]\n"
+                + "  --random <randFactor>      Fraction of ordered pixels to randomise.    [default: 0]\n"
+                + "  --distance <metric>        (RGB|HSB)                                   [default: RGB]\n"
+                + "  --preset <presetName>      (Centre|Corner|Edge|Border|Diagonal|Random|RandomLine)"
+                +                                                                           "[default: Centre]\n"
                 + "\n";
 
     public static void main(String[] args) {
@@ -57,8 +62,9 @@ public class ColourSorter {
 
         // Options
         String outputFile = (String) opts.get("--output");
+        boolean reverse = Boolean.parseBoolean((String) opts.get("--reverse"));
         double randFactor = Double.parseDouble((String) opts.get("--random"));
-        ColourShuffleStrategy shuffler = parseShuffler((String) opts.get("--sort"), randFactor);
+        ColourShuffleStrategy shuffler = parseShuffler((String) opts.get("--sort"), reverse, randFactor);
         DistanceMetric metric = parseMetric((String) opts.get("--distance"));
         String preset = (String) opts.get("--preset");
 
@@ -127,11 +133,33 @@ public class ColourSorter {
                 manager.setAvailableLine(manager.w - 1, manager.h - 1, manager.w - 1, 0);
                 manager.setAvailableLine(manager.w - 1, 0, 0, 0);
                 break;
+            case "Edge":
+                int choice = new Random().nextInt(4);
+                switch (choice) {
+                    case 0:
+                        manager.setAvailableLine(0, 0, 0, manager.h - 1);
+                        break;
+                    case 1:
+                        manager.setAvailableLine(0, manager.h - 1, manager.w - 1, manager.h - 1);
+                        break;
+                    case 2:
+                        manager.setAvailableLine(manager.w - 1, manager.h - 1, manager.w - 1, 0);
+                        break;
+                    case 3:
+                        manager.setAvailableLine(manager.w - 1, 0, 0, 0);
+                }
+                break;
             case "Diagonal":
                 manager.setAvailableLine(0, 0, manager.w, manager.h);
                 break;
             case "Random":
                 manager.setAvailableRandom(10);
+                break;
+            case "RandomLine":
+                manager.setAvailableLine(new Random().nextInt(manager.w ),
+                                            new Random().nextInt(manager.h),
+                                            new Random().nextInt(manager.w),
+                                            new Random().nextInt(manager.h));
                 break;
             default:
                 System.out.println("Unrecognised preset");
@@ -139,7 +167,7 @@ public class ColourSorter {
     }
 
 
-    private static ColourShuffleStrategy parseShuffler(String optionString, double randFactor) {
+    private static ColourShuffleStrategy parseShuffler(String optionString, boolean reverse, double randFactor) {
         ColourShuffleStrategy shuffler = new ShuffleStrategies.Shuffler();
         switch (optionString) {
             case "R":
@@ -166,6 +194,9 @@ public class ColourSorter {
             default:
                 System.out.println("Unrecognised strategy");
                 break;
+        }
+        if (reverse) {
+            shuffler = new ShuffleStrategies.Reverser(shuffler);
         }
         if (randFactor > 0) {
             // wrap in a randomiser
