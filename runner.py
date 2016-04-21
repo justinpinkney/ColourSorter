@@ -1,24 +1,43 @@
 import random
 import subprocess
 import os
+import multiprocessing
+import string
 
-options = {
-	'--sort': ('R', 'G', 'B', 'Hue', 'Saturation', 'Brightness', 'Shuffle'),
-	'--random': (0, 0.01, 0.05, 0.1),
-	# '--distance': ('RGB', 'HSB'),
-	# '--preset': ('Centre', 'Corner', 'Border', 'Diagonal', 'Random'),
-}
+def worker(command):
+	print("Running: ")
+	print(command)
+	subprocess.run(command)
+	return
 
-resolutionX = 1920
-resolutionY = 1080
+def generate_command():
+	options = {
+		'--sort': ('R', 'G', 'B', 'Hue', 'Saturation', 'Brightness', 'Shuffle'),
+		'--reverse': ('True', 'False'),
+		'--random': (0, 0.01, 0.05, 0.1),
+		'--distance': ('RGB', 'HSB'),
+		'--preset': ('Centre', 'Corner', 'Border', 'Diagonal', 'Random', 'Edge', 'RandomLine'),
+	}
 
-# file_directory = "C:\\Users\\Justin\\Documents\\Development\\Github\\ColourSorter\\data\\"
-file_directory = "C:\\Software\\Github\\ColourSorter\\data\\"
-files = ("im (1).jpg", "im (2).JPG", "im (7).JPG", "im (5).JPG")
+	resolutionX = 1920
+	resolutionY = 1080
 
-n_runs = 10
+	away = False
 
-for run in range(n_runs):
+	if away:
+		java_folder = "C:\\Software\\GitHub\\ColourSorter\\out\\production\\ColourSorter"
+		file_directory = "C:\\Software\\GitHub\\ColourSorter\\data\\"
+	else:
+		java_folder = "C:\\Users\\Justin\\Documents\\Development\\Github\\ColourSorter\\out\\production\\ColourSorter"
+		file_directory = "C:\\Users\\Justin\\Pictures\\fancy photos\\portfolio\\"
+
+	all_files = os.listdir(file_directory)
+	file_types = ["jpg", "png", "tiff"]
+	files = []
+	for this_file in all_files:
+		if any(ext in this_file.lower() for ext in file_types):
+			files.append(this_file)
+
 	# Pick random options
 	selected_options = {}
 	for key in options.keys():
@@ -28,7 +47,7 @@ for run in range(n_runs):
 	selected_file = file_directory + random.choice(files)
 
 	# Pick a new filename
-	out_file = str(run) + ".png"
+	out_file = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(8)) + ".png"
 
 	# Assemble the string
 	run_command = ["java",
@@ -44,17 +63,33 @@ for run in range(n_runs):
 		run_command.append(key)
 		run_command.append(str(selected_options[key]))
 
-	# Save settings to a text file
-	with open("record.txt", 'a') as record_file:
-		record_file.write(out_file)
-		record_file.write('\t')
-		for item in run_command:
-			record_file.write(item + ' ')
-		record_file.write('\n')
-	# Run the colour sorter
-	print(run_command)
-	# os.chdir("C:\\Users\\Justin\\Documents\\Development\\Github\\ColourSorter\\out\\production\\ColourSorter")
-	os.chdir("C:\\Software\\Github\\ColourSorter\\out\\production\\ColourSorter")
+	# # Save settings to a text file
+	# with open("record.txt", 'a') as record_file:
+	# 	record_file.write(out_file)
+	# 	record_file.write('\t')
+	# 	for item in run_command:
+	# 		record_file.write(item + ' ')
+	# 	record_file.write('\n')
+
+	return run_command
+		
+
+
+if __name__ == '__main__':
 	
-	out = subprocess.check_output(run_command)
-	print(out)
+	java_folder = "C:\\Users\\Justin\\Documents\\Development\\Github\\ColourSorter\\out\\production\\ColourSorter"
+	n_runs = 100
+
+	for run in range(n_runs):
+		# Run the colour sorter
+		os.chdir(java_folder)
+		
+		jobs = []
+		for i in range(4):
+			p = multiprocessing.Process(target=worker, args=(generate_command(),))
+			jobs.append(p)
+			p.start()
+			print("starting" + str(i))
+		
+		for p in jobs:
+			p.join()

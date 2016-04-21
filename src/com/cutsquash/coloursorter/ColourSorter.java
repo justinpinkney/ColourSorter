@@ -8,6 +8,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Random;
+
+import static java.lang.Math.random;
+import static java.lang.Math.round;
 
 /**
  * Main class to set up and run the colour sorting algorithm.
@@ -30,6 +34,7 @@ public class ColourSorter {
                     + " ["
                     +   " --output <outputFile>"
                     +   " --sort <sortMethod>"
+                    +   " --reverse <reverseFlag>"
                     +   " --random <randFactor>"
                     +   " --distance <metric>"
                     +   " --preset <presetName>"
@@ -38,13 +43,15 @@ public class ColourSorter {
                 + "  ColourSorter --version\n"
                 + "\n"
                 + "Options:\n"
-                + "  -h --help              Show this screen.\n"
-                + "  --version              Show version.\n"
-                + "  --output <outputFile>  Output file location.                       [default: output.png]\n"
-                + "  --sort <sortMethod>    (R|G|B|Hue|Saturation|Brightness|Shuffle)   [default: Shuffle]\n"
-                + "  --random <randFactor>  Fraction of ordered pixels to randomise.    [default: 0]\n"
-                + "  --distance <metric>    (RGB|HSB)                                   [default: RGB]\n"
-                + "  --preset <presetName>  (Centre|Corner|Border|Diagonal|Random)      [default: Centre]\n"
+                + "  -h --help                  Show this screen.\n"
+                + "  --version                  Show version.\n"
+                + "  --output <outputFile>      Output file location.                       [default: output.png]\n"
+                + "  --sort <sortMethod>        (R|G|B|Hue|Saturation|Brightness|Shuffle)   [default: Shuffle]\n"
+                + "  --reverse <reverseFlag>    Reverse the sort method?                    [default: False]\n"
+                + "  --random <randFactor>      Fraction of ordered pixels to randomise.    [default: 0]\n"
+                + "  --distance <metric>        (RGB|HSB)                                   [default: RGB]\n"
+                + "  --preset <presetName>      (Centre|Corner|Edge|Border|Diagonal|Random|RandomLine)"
+                +                                                                           "[default: Centre]\n"
                 + "\n";
 
     /**
@@ -63,12 +70,15 @@ public class ColourSorter {
 
         // Options
         String outputFile = (String) opts.get("--output");
+        boolean reverse = Boolean.parseBoolean((String) opts.get("--reverse"));
         double randFactor = Double.parseDouble((String) opts.get("--random"));
-        ColourShuffleStrategy shuffler = parseShuffler((String) opts.get("--sort"), randFactor);
+        ColourShuffleStrategy shuffler = parseShuffler((String) opts.get("--sort"), reverse, randFactor);
         DistanceMetric metric = parseMetric((String) opts.get("--distance"));
+        String preset = (String) opts.get("--preset");
 
         // Set up and run
-        ColourSorter sorter = new ColourSorter(x, y, inputFile, metric, shuffler, outputFile);
+        ColourSorter sorter = new ColourSorter(x, y, inputFile,
+                                                metric, shuffler, outputFile, preset);
         sorter.run();
     }
 
@@ -87,10 +97,14 @@ public class ColourSorter {
                         String filename,
                         DistanceMetric distanceMetric,
                         ColourShuffleStrategy shuffler,
-                        String outputFilename) {
+                        String outputFilename,
+                        String preset) {
 
         manager = new PixelManager(width, height, distanceMetric);
         cManager = new ColourManager(filename, width, height, shuffler);
+        if (preset.length()>0) {
+            this.applyPreset(preset);
+        }
         this.outputFilename = outputFilename;
     }
 
@@ -104,22 +118,11 @@ public class ColourSorter {
                         new ShuffleStrategies.BrightnessSorter()
                         ,0.2
                 ),
-                "output.png"
+                "output.png", ""
             );
     }
 
     public void run() {
-
-//        for (int i = 0; i < manager.w; i++) {
-//            manager.setAvailable(manager.w - i - 1, 0);
-//        }
-
-//        manager.setAvailable(round(manager.w/2), round(manager.w/2));
-//        manager.setAvailableLine(0, 0, manager.w, manager.h);
-
-//        manager.setAvailableRandom(100);
-
-        availableBorder(manager);
 
         for (int c : cManager) manager.placeColour(c);
 
@@ -134,8 +137,55 @@ public class ColourSorter {
 
     }
 
+    private void applyPreset(String preset) {
+        switch (preset) {
+            case "Centre":
+                manager.setAvailable(manager.w/2, manager.h/2);
+                break;
+            case "Corner":
+                manager.setAvailable(0, 0);
+                break;
+            case "Border":
+                manager.setAvailableLine(0, 0, 0, manager.h - 1);
+                manager.setAvailableLine(0, manager.h - 1, manager.w - 1, manager.h - 1);
+                manager.setAvailableLine(manager.w - 1, manager.h - 1, manager.w - 1, 0);
+                manager.setAvailableLine(manager.w - 1, 0, 0, 0);
+                break;
+            case "Edge":
+                int choice = new Random().nextInt(4);
+                switch (choice) {
+                    case 0:
+                        manager.setAvailableLine(0, 0, 0, manager.h - 1);
+                        break;
+                    case 1:
+                        manager.setAvailableLine(0, manager.h - 1, manager.w - 1, manager.h - 1);
+                        break;
+                    case 2:
+                        manager.setAvailableLine(manager.w - 1, manager.h - 1, manager.w - 1, 0);
+                        break;
+                    case 3:
+                        manager.setAvailableLine(manager.w - 1, 0, 0, 0);
+                }
+                break;
+            case "Diagonal":
+                manager.setAvailableLine(0, 0, manager.w, manager.h);
+                break;
+            case "Random":
+                manager.setAvailableRandom(10);
+                break;
+            case "RandomLine":
+                manager.setAvailableLine(new Random().nextInt(manager.w ),
+                                            new Random().nextInt(manager.h),
+                                            new Random().nextInt(manager.w),
+                                            new Random().nextInt(manager.h));
+                break;
+            default:
+                System.out.println("Unrecognised preset");
+        }
+    }
 
-    private static ColourShuffleStrategy parseShuffler(String optionString, double randFactor) {
+
+    private static ColourShuffleStrategy parseShuffler(String optionString, boolean reverse, double randFactor) {
         ColourShuffleStrategy shuffler = new ShuffleStrategies.Shuffler();
         switch (optionString) {
             case "R":
@@ -163,6 +213,9 @@ public class ColourSorter {
                 System.out.println("Unrecognised strategy");
                 break;
         }
+        if (reverse) {
+            shuffler = new ShuffleStrategies.Reverser(shuffler);
+        }
         if (randFactor > 0) {
             // wrap in a randomiser
             shuffler = new ShuffleStrategies.Randomiser(shuffler, randFactor);
@@ -185,22 +238,5 @@ public class ColourSorter {
         }
         return metric;
     }
-
-//    private static parsePreset(String optionString) {
-//
-//    }
-
-    // Availability presets ////////////////////////////////////////////////////////////////////////////////////////////
-    public static void availableBorder(PixelManager m) {
-        m.setAvailableLine(0, 0, 0, m.h - 1);
-        m.setAvailableLine(0, m.h - 1, m.w - 1, m.h - 1);
-        m.setAvailableLine(m.w - 1, m.h - 1, m.w - 1, 0);
-        m.setAvailableLine(m.w - 1, 0, 0, 0);
-    }
-
-    public static void availableDiagonal(PixelManager m) {
-        m.setAvailableLine(0, 0, m.w, m.h);
-    }
-
 
 }
