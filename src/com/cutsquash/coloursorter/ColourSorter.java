@@ -9,10 +9,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import static java.lang.Math.round;
-
 /**
- * Created by jnp1 on 05/04/2016.
+ * Main class to set up and run the colour sorting algorithm.
+ *
+ * @author  Justin Pinkney
+ * @version 0.1
  */
 public class ColourSorter {
 
@@ -46,6 +47,11 @@ public class ColourSorter {
                 + "  --preset <presetName>  (Centre|Corner|Border|Diagonal|Random)      [default: Centre]\n"
                 + "\n";
 
+    /**
+     * Creates and runs a ColourSorter with options specified by the string args.
+     *
+     * @param args  Argument string (use --help for more info)
+     */
     public static void main(String[] args) {
         Map<String, Object> opts =
             new Docopt(doc).withVersion("Colour Sorter 1.0").parse(args);
@@ -66,6 +72,16 @@ public class ColourSorter {
         sorter.run();
     }
 
+    /**
+     * Construct a ColourSorter.
+     *
+     * @param width             Output image width in pixels
+     * @param height            Output image height in pixels
+     * @param filename          Path string to input file
+     * @param distanceMetric    {@link DistanceMetric} to use
+     * @param shuffler          {@link ColourShuffleStrategy} to use
+     * @param outputFilename    Path string for output file
+     */
     public ColourSorter(int width,
                         int height,
                         String filename,

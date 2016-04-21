@@ -25,7 +25,7 @@ class Pixel {
   }
 
   public int getDistance(int otherColor) {
-    int minDist = 1000000;
+    int minDist = Integer.MAX_VALUE;
     for (Pixel neighbour : neighbours ){
       if (neighbour.state == State.FILLED) {
         int thisDist = compareColour(neighbour.c, otherColor);

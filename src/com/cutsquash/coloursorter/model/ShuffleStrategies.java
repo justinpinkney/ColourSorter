@@ -93,6 +93,8 @@ public class ShuffleStrategies {
         }
     }
 
+    // TODO combination sorting methods
+
     // Comparater //////////////////////////////////////////////////////////////////////////////////////////////////////
     private static class HsbComparater implements Comparator<Integer> {
 

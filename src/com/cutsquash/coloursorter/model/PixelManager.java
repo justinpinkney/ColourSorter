@@ -41,14 +41,13 @@ public class PixelManager {
                     }
                     for (int dj = -1; dj <= 1; dj++) {
                         if (j + dj == -1 || j + dj == h
-                        || (di==0 && dj==0)
-                        //|| (di==dj)
+                        || (di==0 && dj==0) // Moore neighbourhood (i.e. 8)
                         ) {
                             continue;
                         }
                         neighbours.add(pixelGrid[i+di][j+dj]);
                     }
-                } // Finished making neighbour list
+                }
 
                 pixelGrid[i][j].setNeighbours(neighbours);
             }
@@ -66,14 +65,16 @@ public class PixelManager {
     }
 
     public void placeColour(int c) {
+        // TODO make performance test for this method, as it's always going to be the most called thing
         // check the min diff for each available space
         int besti = 0;
-        int bestDiff = 500000;
+        int bestDiff = Integer.MAX_VALUE;
         for (int i=0; i<availables.size(); i++) {
             Pixel p = availables.get(i);
             int mindiff = p.getDistance(c);
             // check the index of the lowest mindiff
             // What about ties?
+            // TODO implement other methods, e.g. max, or average
             if (mindiff < bestDiff) {
                 besti = i;
                 bestDiff = mindiff;

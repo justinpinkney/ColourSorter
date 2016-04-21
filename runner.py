@@ -9,11 +9,12 @@ options = {
 	# '--preset': ('Centre', 'Corner', 'Border', 'Diagonal', 'Random'),
 }
 
-resolutionX = 200
-resolutionY = 200
+resolutionX = 1920
+resolutionY = 1080
 
-file_directory = "C:\\Users\\Justin\\Documents\\Development\\Github\\ColourSorter\\data\\"
-files = ("im (5).JPG", "saved.png")
+# file_directory = "C:\\Users\\Justin\\Documents\\Development\\Github\\ColourSorter\\data\\"
+file_directory = "C:\\Software\\Github\\ColourSorter\\data\\"
+files = ("im (1).jpg", "im (2).JPG", "im (7).JPG", "im (5).JPG")
 
 n_runs = 10
 
@@ -52,7 +53,8 @@ for run in range(n_runs):
 		record_file.write('\n')
 	# Run the colour sorter
 	print(run_command)
-	os.chdir("C:\\Users\\Justin\\Documents\\Development\\Github\\ColourSorter\\out\\production\\ColourSorter")
+	# os.chdir("C:\\Users\\Justin\\Documents\\Development\\Github\\ColourSorter\\out\\production\\ColourSorter")
+	os.chdir("C:\\Software\\Github\\ColourSorter\\out\\production\\ColourSorter")
 	
 	out = subprocess.check_output(run_command)
 	print(out)
