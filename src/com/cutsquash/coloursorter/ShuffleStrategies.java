@@ -1,8 +1,5 @@
-package com.cutsquash.coloursorter.model;
+package com.cutsquash.coloursorter;
 
-import com.cutsquash.coloursorter.Utils;
-
-import java.awt.*;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;

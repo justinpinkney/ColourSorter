@@ -1,8 +1,4 @@
-package com.cutsquash.coloursorter.model;
-
-import com.cutsquash.coloursorter.Utils;
-
-import java.awt.*;
+package com.cutsquash.coloursorter;
 
 /**
  * Created by jnp1 on 08/04/2016.

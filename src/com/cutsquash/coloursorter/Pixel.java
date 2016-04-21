@@ -1,4 +1,4 @@
-package com.cutsquash.coloursorter.model;
+package com.cutsquash.coloursorter;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ class Pixel {
   public Pixel(PixelManager manager,
                 DistanceMetric metric, 
                 int i, int j) {
-    // Create a new empty com.cutsquash.coloursorter.model.Pixel object
+    // Create a new empty com.cutsquash.coloursorter.Pixel object
     this.state = State.EMPTY;
     this.location[0] = i;
     this.location[1] = j;
