@@ -42,12 +42,19 @@ public class Pixel {
     int getCost(int otherColor) {
         // TODO implement other strategies.
         int minDist = Integer.MAX_VALUE;
+        int fullNeighbourCount = 0;
         for (Pixel neighbour : neighbours ){
             // Only check filled neighbours
             if (neighbour.state == State.FILLED) {
+                fullNeighbourCount++;
                 int thisDist = metric.compareColour(neighbour.colour, otherColor);
                 if (thisDist < minDist) { minDist = thisDist; }
             }
+        }
+
+        // Case if there are no filled neighbours (i.e. this is a starting Pixel
+        if (fullNeighbourCount == 0) {
+            minDist = 0;
         }
         return minDist;
     }
