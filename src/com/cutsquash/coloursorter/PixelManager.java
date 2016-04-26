@@ -53,7 +53,7 @@ public class PixelManager {
     public BufferedImage render() {
         for (int i=0; i<w; i++) {
             for (int j=0; j<h; j++) {
-                int c = pixelGrid[i][j].c;
+                int c = pixelGrid[i][j].getColour();
                 img.setRGB(i, j, c);
             }
         }
@@ -67,7 +67,7 @@ public class PixelManager {
         int bestDiff = Integer.MAX_VALUE;
         for (int i=0; i<availables.size(); i++) {
             Pixel p = availables.get(i);
-            int mindiff = p.getDistance(c);
+            int mindiff = p.getCost(c);
             // check the index of the lowest mindiff
             // What about ties?
             // TODO implement other methods, e.g. max, or average
