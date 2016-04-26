@@ -3,9 +3,12 @@ package com.cutsquash.coloursorter;
 import org.docopt.Docopt;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 
@@ -49,7 +52,8 @@ public class ColourSorter {
                 + "  --random <randFactor>      Fraction of ordered pixels to randomise.    [default: 0]\n"
                 + "  --distance <metric>        (RGB|HSB)                                   [default: RGB]\n"
                 + "  --preset <presetName>      (Centre|Corner|Edge|Border|Diagonal|Random|RandomLine)"
-                +                                                                           "[default: Centre]\n"
+                +                               " Or pass a filename to use the non-black area of the image as available pixels."
+                +                                                                                   "[default: Centre]\n"
                 + "\n";
 
     /**
@@ -123,16 +127,19 @@ public class ColourSorter {
     public void run() {
 
         for (int c : cManager) manager.placeColour(c);
+        renderAndSave(outputFilename);
 
+    }
+
+    private void renderAndSave(String filename) {
         BufferedImage img = manager.render();
 
         try {
-            File outputfile = new File(outputFilename);
+            File outputfile = new File(filename);
             ImageIO.write(img, "png", outputfile);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-
     }
 
     private void applyPreset(String preset) {
@@ -150,8 +157,7 @@ public class ColourSorter {
                 manager.setAvailableLine(manager.w - 1, 0, 0, 0);
                 break;
             case "Edge":
-                int choice = new Random().nextInt(4);
-                switch (choice) {
+                switch (new Random().nextInt(4)) {
                     case 0:
                         manager.setAvailableLine(0, 0, 0, manager.h - 1);
                         break;
@@ -166,7 +172,18 @@ public class ColourSorter {
                 }
                 break;
             case "Diagonal":
-                manager.setAvailableLine(0, 0, manager.w, manager.h);
+                switch (new Random().nextInt(3)) {
+                    case 0:
+                        manager.setAvailableLine(0, 0, manager.w, manager.h);
+                        break;
+                    case 1:
+                        manager.setAvailableLine(manager.w, 0, 0, manager.h);
+                        break;
+                    case 2:
+                        manager.setAvailableLine(0, 0, manager.w, manager.h);
+                        manager.setAvailableLine(manager.w, 0, 0, manager.h);
+                        break;
+                }
                 break;
             case "Random":
                 manager.setAvailableRandom(10);
@@ -177,8 +194,45 @@ public class ColourSorter {
                                             new Random().nextInt(manager.w),
                                             new Random().nextInt(manager.h));
                 break;
+            case "Line":
+                switch (new Random().nextInt(3)) {
+                    case 0: // Horizontal line
+                        manager.setAvailableLine(0, manager.h/2, manager.w, manager.h/2);
+                        break;
+                    case 1: // Vertical line
+                        manager.setAvailableLine(manager.w/2, 0, manager.w/2, manager.h);
+                        break;
+                    case 2: //Both
+                        manager.setAvailableLine(0, manager.h/2, manager.w, manager.h/2);
+                        manager.setAvailableLine(manager.w/2, 0, manager.w/2, manager.h);
+                        break;
+                }
+                break;
             default:
-                System.out.println("Unrecognised preset");
+                // If not a recognised preset, assume this is a path to a file to use as a template
+                BufferedImage originalTemplate = null;
+                BufferedImage templateImg = null;
+                try {
+                    originalTemplate = ImageIO.read(new File(preset));
+                    templateImg = new BufferedImage(manager.w, manager.h, BufferedImage.TYPE_INT_ARGB);
+
+                    Graphics g = templateImg.createGraphics();
+                    g.drawImage(originalTemplate, 0, 0, manager.w, manager.h, null);
+                    g.dispose();
+                } catch (IOException e) {
+                    System.out.println(e.getMessage() + preset);
+                }
+
+                for (int i=0; i<manager.w; i++) {
+                    for (int j=0; j<manager.h; j++) {
+                        int c = templateImg.getRGB(i, j);
+                        int[] rgb = Utils.getRgb(c);
+                        // If non black set available
+                        if (rgb[0] > 0 || rgb[1] > 0 || rgb[2] > 0) {
+                            manager.setAvailable(i,j);
+                        }
+                    }
+                }
         }
     }
 
@@ -237,4 +291,24 @@ public class ColourSorter {
         return metric;
     }
 
+    private class saveTask implements Runnable {
+        int i = 0;
+        boolean keepGoing = true;
+
+        public void stop() {
+            keepGoing = false;
+        }
+
+        public void run() {
+            while (keepGoing) {
+                renderAndSave(i + ".png");
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                i++;
+            }
+        }
+    }
 }
