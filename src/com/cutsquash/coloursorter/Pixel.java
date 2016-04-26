@@ -1,4 +1,4 @@
-package com.cutsquash.coloursorter.model;
+package com.cutsquash.coloursorter;
 
 import java.util.ArrayList;
 

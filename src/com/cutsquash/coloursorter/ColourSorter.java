@@ -1,6 +1,5 @@
 package com.cutsquash.coloursorter;
 
-import com.cutsquash.coloursorter.model.*;
 import org.docopt.Docopt;
 
 import javax.imageio.ImageIO;
@@ -10,7 +9,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Random;
 
-import static java.lang.Math.random;
 import static java.lang.Math.round;
 
 /**

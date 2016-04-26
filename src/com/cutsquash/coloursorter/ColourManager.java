@@ -1,7 +1,4 @@
-package com.cutsquash.coloursorter.model;
-
-import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
+package com.cutsquash.coloursorter;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -9,10 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-
-import static java.awt.Image.SCALE_DEFAULT;
 
 
 public class ColourManager implements Iterable<Integer>{

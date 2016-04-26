@@ -1,10 +1,11 @@
 import random
 import subprocess
 import os
-from multiprocessing import Process, Queue
+from multiprocessing import Process, JoinableQueue
 import string
 
 def worker(queue):
+	print("Starting worker")
 	while True:
 		command = queue.get()
 		print(command)
@@ -37,9 +38,9 @@ def generate_command():
 
 	file_types = ["jpg", "png", "tiff"]
 	files = []
-	for dirpath, dirnames, filenames = os.walk(file_directory):
+	for dirpath, dirnames, filenames in os.walk(file_directory):
 		for name in filenames:
-			this_file = os.path.join(dirpath, filenames)
+			this_file = os.path.join(dirpath, name)
 			if any(ext in this_file.lower() for ext in file_types):
 				files.append(this_file)
 
@@ -49,7 +50,7 @@ def generate_command():
 		selected_options[key] = random.choice(options[key])
 
 	# Pick a random file
-	selected_file = file_directory + random.choice(files)
+	selected_file = random.choice(files)
 
 	# Pick a new filename
 	out_file = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(8)) + ".png"
@@ -92,16 +93,20 @@ if __name__ == '__main__':
 		file_directory = "C:\\Users\\Justin\\Pictures\\fancy photos\\portfolio\\"
 
 	os.chdir(java_folder)
-	n_runs = 100
+	n_runs = 5
 	n_workers = 4
 
-	q = Queue()
+	q = JoinableQueue()
 
 	for i in range(4):
-		p = Process(target=worker, args=(q))
+		print("Starting process %d" % i)
+		p = Process(target=worker, args=(q,))
+		p.daemon = True
 		p.start()
 
 	for run in range(n_runs):
-		q.put(generate_command())
+		new_command = generate_command()
+		print(new_command)
+		q.put(new_command)
 
 	q.join()
