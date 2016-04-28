@@ -38,6 +38,7 @@ public class ColourSorter {
                     +   " --reverse <reverseFlag>"
                     +   " --random <randFactor>"
                     +   " --distance <metric>"
+                    +   " --checker <method>"
                     +   " --preset <presetName>"
                     + "]\n"
                 + "  ColourSorter (-h | --help)\n"
@@ -51,6 +52,7 @@ public class ColourSorter {
                 + "  --reverse <reverseFlag>    Reverse the sort method?                    [default: False]\n"
                 + "  --random <randFactor>      Fraction of ordered pixels to randomise.    [default: 0]\n"
                 + "  --distance <metric>        (RGB|HSB)                                   [default: RGB]\n"
+                + "  --checker <method>         (min|mean|mean)                             [default: min]\n"
                 + "  --preset <presetName>      (Centre|Corner|Edge|Border|Diagonal|Random|RandomLine)"
                 +                               " Or pass a filename to use the non-black area of the image as available pixels."
                 +                                                                                   "[default: Centre]\n"
@@ -76,11 +78,17 @@ public class ColourSorter {
         double randFactor = Double.parseDouble((String) opts.get("--random"));
         ColourShuffleStrategy shuffler = parseShuffler((String) opts.get("--sort"), reverse, randFactor);
         DistanceMetric metric = parseMetric((String) opts.get("--distance"));
+        Checker checker = parseChecker((String) opts.get("--checker"));
         String preset = (String) opts.get("--preset");
 
         // Set up and run
-        ColourSorter sorter = new ColourSorter(x, y, inputFile,
-                                                metric, shuffler, outputFile, preset);
+        ColourSorter sorter = new ColourSorter(x, y,
+                                                inputFile,
+                                                metric,
+                                                checker,
+                                                shuffler,
+                                                outputFile,
+                                                preset);
         sorter.run();
     }
 
@@ -98,11 +106,12 @@ public class ColourSorter {
                         int height,
                         String filename,
                         DistanceMetric distanceMetric,
+                        Checker checker,
                         ColourShuffleStrategy shuffler,
                         String outputFilename,
                         String preset) {
 
-        manager = new PixelManager(width, height, distanceMetric);
+        manager = new PixelManager(width, height, distanceMetric, checker);
         cManager = new ColourManager(filename, width, height, shuffler);
         if (preset.length()>0) {
             this.applyPreset(preset);
@@ -110,12 +119,14 @@ public class ColourSorter {
         this.outputFilename = outputFilename;
     }
 
+
     public ColourSorter(int width,
                         int height,
                         String filename) {
 
         this(width, height, filename,
                 new DistanceMetricHSB(),
+                new MinChecker(),
                 new ShuffleStrategies.Randomiser(
                         new ShuffleStrategies.BrightnessSorter()
                         ,0.2
@@ -234,6 +245,22 @@ public class ColourSorter {
                     }
                 }
         }
+    }
+
+    private static Checker parseChecker(String method) {
+        Checker checker = new MinChecker();
+        switch (method) {
+            case "min":
+                checker = new MinChecker();
+                break;
+            case "max":
+                checker = new MaxChecker();
+                break;
+            case "mean":
+                checker = new MeanChecker();
+                break;
+        }
+        return checker;
     }
 
 

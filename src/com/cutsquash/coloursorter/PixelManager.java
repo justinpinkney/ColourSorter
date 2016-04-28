@@ -12,7 +12,7 @@ public class PixelManager {
     public int w, h;
     BufferedImage img;
 
-    public PixelManager(int w, int h, DistanceMetric metric){
+    public PixelManager(int w, int h, DistanceMetric metric, Checker checker){
         // Initialise grid of empty pixels
         pixelGrid = new Pixel[w][h];
         img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -20,7 +20,7 @@ public class PixelManager {
         this.h = h;
         for (int i=0; i<w; i++) {
             for (int j=0; j<h; j++) {
-                pixelGrid[i][j] = new Pixel(this, metric, i, j);
+                pixelGrid[i][j] = new Pixel(this, metric, checker, i, j);
             }
         }
 
@@ -70,7 +70,6 @@ public class PixelManager {
             int mindiff = p.getCost(c);
             // check the index of the lowest mindiff
             // What about ties?
-            // TODO implement other methods, e.g. max, or average
             if (mindiff < bestDiff) {
                 besti = i;
                 bestDiff = mindiff;

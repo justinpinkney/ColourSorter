@@ -11,6 +11,7 @@ public class Pixel {
     private int colour;
     private ArrayList<Pixel> neighbours;
     private DistanceMetric metric;
+    private Checker checker;
     private PixelManager manager;
     private State state;
 
@@ -24,11 +25,13 @@ public class Pixel {
      */
     public Pixel(PixelManager manager,
                     DistanceMetric metric,
+                    Checker checker,
                     int i, int j) {
         this.state = State.EMPTY;
         this.location = new int[]{i, j};
         this.manager = manager;
         this.metric = metric;
+        this.checker = checker;
     }
 
     /**
@@ -40,23 +43,14 @@ public class Pixel {
      * @return              Overall cost
      */
     int getCost(int otherColor) {
-        // TODO implement other strategies.
-        int minDist = Integer.MAX_VALUE;
-        int fullNeighbourCount = 0;
+        checker.reset();
         for (Pixel neighbour : neighbours ){
             // Only check filled neighbours
             if (neighbour.state == State.FILLED) {
-                fullNeighbourCount++;
-                int thisDist = metric.compareColour(neighbour.colour, otherColor);
-                if (thisDist < minDist) { minDist = thisDist; }
+                checker.addValue(metric.compareColour(neighbour.colour, otherColor));
             }
         }
-
-        // Case if there are no filled neighbours (i.e. this is a starting Pixel
-        if (fullNeighbourCount == 0) {
-            minDist = 0;
-        }
-        return minDist;
+        return checker.getResult();
     }
 
     /**
