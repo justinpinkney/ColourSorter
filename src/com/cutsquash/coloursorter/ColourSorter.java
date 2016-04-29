@@ -137,7 +137,14 @@ public class ColourSorter {
 
     public void run() {
 
-        for (int c : cManager) manager.placeColour(c);
+        int total = manager.w * manager.h;
+        int count = 0;
+        int interval = 1000;
+        for (int c : cManager) {
+            manager.placeColour(c);
+            count++;
+            if (count % interval == 0) ProgressBar.update(count, total);
+        }
         renderAndSave(outputFilename);
 
     }
