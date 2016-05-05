@@ -1,9 +1,6 @@
 package com.cutsquash.coloursorter;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by jnp1 on 06/04/2016.
@@ -105,6 +102,43 @@ public class ShuffleStrategies {
             // Apply the original sort method
             initialStrategy.shuffle(list);
             Collections.reverse(list);
+        }
+    }
+
+    public static class Interleaver implements ColourShuffleStrategy {
+
+        ColourShuffleStrategy strategy1;
+        ColourShuffleStrategy strategy2;
+
+        public Interleaver(ColourShuffleStrategy strategy1,
+                           ColourShuffleStrategy strategy2) {
+            this.strategy1 = strategy1;
+            this.strategy2 = strategy2;
+        }
+
+        @Override
+        public void shuffle(List list) {
+            // Shuffle half the list with method 1
+            List firstHalf = new ArrayList(list.subList(0, list.size()/2));
+            strategy1.shuffle(firstHalf);
+            // Shuffle the other half with method 2
+            List secondHalf = new ArrayList(list.subList(list.size()/2, list.size()));
+            strategy2.shuffle(secondHalf);
+            // Interleave the result
+
+            list.clear();
+            Iterator iterator1 = firstHalf.iterator();
+            Iterator iterator2 = secondHalf.iterator();
+
+            while (iterator1.hasNext() || iterator2.hasNext()) {
+                if (iterator1.hasNext()) {
+                    list.add(iterator1.next());
+                }
+                if (iterator2.hasNext())
+                {
+                    list.add(iterator2.next());
+                }
+            }
         }
     }
 
