@@ -32,14 +32,14 @@ public class ColourSorter {
                 + "Usage:\n"
                 + "  ColourSorter <x> <y> <file>"
                     // Options
+                    +   "[ --sort=<sortMethod> | --interleave <sort1> <sort2> ] "
                     + " ["
-                    +   " --output <outputFile>"
-                    +   " --sort <sortMethod>"
-                    +   " --reverse <reverseFlag>"
-                    +   " --random <randFactor>"
-                    +   " --distance <metric>"
-                    +   " --checker <method>"
-                    +   " --preset <presetName>"
+                    +   " --output=<outputFile>"
+                    +   " --reverse=<reverseFlag>"
+                    +   " --random=<randFactor>"
+                    +   " --distance=<metric>"
+                    +   " --checker=<method>"
+                    +   " --preset=<presetName>"
                     + "]\n"
                 + "  ColourSorter (-h | --help)\n"
                 + "  ColourSorter --version\n"
@@ -52,7 +52,7 @@ public class ColourSorter {
                 + "  --reverse <reverseFlag>    Reverse the sort method?                    [default: False]\n"
                 + "  --random <randFactor>      Fraction of ordered pixels to randomise.    [default: 0]\n"
                 + "  --distance <metric>        (RGB|HSB)                                   [default: RGB]\n"
-                + "  --checker <method>         (min|mean|mean)                             [default: min]\n"
+                + "  --checker <method>         (min|max|mean|mod)                          [default: min]\n"
                 + "  --preset <presetName>      (Centre|Corner|Edge|Border|Diagonal|Random|RandomLine)"
                 +                               " Or pass a filename to use the non-black area of the image as available pixels."
                 +                                                                                   "[default: Centre]\n"
@@ -76,7 +76,17 @@ public class ColourSorter {
         String outputFile = (String) opts.get("--output");
         boolean reverse = Boolean.parseBoolean((String) opts.get("--reverse"));
         double randFactor = Double.parseDouble((String) opts.get("--random"));
-        ColourShuffleStrategy shuffler = parseShuffler((String) opts.get("--sort"), reverse, randFactor);
+        boolean interleave = (boolean) opts.get("--interleave");
+
+        ColourShuffleStrategy shuffler;
+        if (interleave) {
+            ColourShuffleStrategy shuffler1 = parseShuffler((String) opts.get("<sort1>"), false, 0);
+            ColourShuffleStrategy shuffler2 = parseShuffler((String) opts.get("<sort2>"), false, 0);
+            shuffler = new ShuffleStrategies.Interleaver(shuffler1, shuffler2);
+            shuffler = applyModifiers(reverse, randFactor, shuffler);
+        } else {
+            shuffler = parseShuffler((String) opts.get("--sort"), reverse, randFactor);
+        }
         DistanceMetric metric = parseMetric((String) opts.get("--distance"));
         Checker checker = parseChecker((String) opts.get("--checker"));
         String preset = (String) opts.get("--preset");
@@ -266,6 +276,11 @@ public class ColourSorter {
             case "mean":
                 checker = new MeanChecker();
                 break;
+            case "mod":
+                checker = new ModifiedMinChecker();
+                break;
+            default:
+                System.out.println("Unrecognised checker options");
         }
         return checker;
     }
@@ -299,6 +314,11 @@ public class ColourSorter {
                 System.out.println("Unrecognised strategy");
                 break;
         }
+        shuffler = applyModifiers(reverse, randFactor, shuffler);
+        return shuffler;
+    }
+
+    private static ColourShuffleStrategy applyModifiers(boolean reverse, double randFactor, ColourShuffleStrategy shuffler) {
         if (reverse) {
             shuffler = new ShuffleStrategies.Reverser(shuffler);
         }

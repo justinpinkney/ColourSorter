@@ -19,7 +19,9 @@ def generate_command():
 		'--reverse': ('True', 'False'),
 		'--random': (0, 0, 0, 0.01, 0.05, 0.1),
 		'--distance': ('RGB', 'HSB'),
+		'--checker': ('min', 'max', 'mean'),
 		'--preset': ('Centre', 'Corner', 'Border', 'Diagonal', 'Random', 'Edge', 'RandomLine'),
+		#'--preset': ('Random',),
 	}
 
 	resolutionX = 1920
@@ -93,7 +95,7 @@ if __name__ == '__main__':
 		file_directory = "C:\\Users\\Justin\\Pictures\\fancy photos\\portfolio\\"
 
 	os.chdir(java_folder)
-	n_runs = 5
+	n_runs = 100
 	n_workers = 4
 
 	q = JoinableQueue()
