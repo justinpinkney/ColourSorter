@@ -93,8 +93,8 @@ public class PixelManager {
 
     public void setAvailable(int i, int j) {
         // Bound the input
-        i = Math.max(0, Math.min(i, this.w));
-        j = Math.max(0, Math.min(i, this.h));
+        i = Math.max(0, Math.min(i, this.w-1));
+        j = Math.max(0, Math.min(j, this.h-1));
         pixelGrid[i][j].setState(State.AVAILABLE);
 }
 
