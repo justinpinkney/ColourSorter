@@ -16,11 +16,12 @@ public class MeanChecker implements Checker {
 
     @Override
     public int getResult() {
-        return currentMean;
+        return currentMean/(1+totalValues)^2;
     }
 
     @Override
     public void reset() {
         currentMean = 0;
+        totalValues = 0;
     }
 }

@@ -63,9 +63,11 @@ public class PixelManager {
     public void placeColour(int c) {
         // TODO make performance test for this method, as it's always going to be the most called thing
         // check the min diff for each available space
+        int factor = 10; // skip factor for approximation
         int besti = 0;
         int bestDiff = Integer.MAX_VALUE;
-        for (int i=0; i<availables.size(); i++) {
+        // Should we actually check each filled pixel with available neighbours instead?
+        for (int i=0; i<availables.size(); i+=factor) {
             Pixel p = availables.get(i);
             int mindiff = p.getCost(c);
             // check the index of the lowest mindiff
