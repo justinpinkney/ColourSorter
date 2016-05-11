@@ -16,21 +16,29 @@ def worker(queue):
 
 def generate_command():
 	options = {
-		'--sort': ('R', 'G', 'B', 'Hue', 'Saturation', 'Brightness', 'Shuffle'),
 		'--reverse': ('True', 'False'),
 		'--random': (0, 0, 0, 0.01, 0.05, 0.1),
 		'--distance': ('RGB', 'HSB'),
-		'--checker': ('min', 'max', 'mean'),
+		'--checker': ('min', 'max', 'mean','mod'),
 		'--preset': ('Centre', 'Corner', 'Border', 'Diagonal', 'Random', 'Edge', 'RandomLine'),
 		#'--preset': ('Random',),
 	}
 
+	sort_option = (
+						{
+							'--sort': ('R', 'G', 'B', 'Hue', 'Saturation', 'Brightness', 'Shuffle'),
+						},
+						{
+							'--interleave': ('R', 'G', 'B', 'Hue', 'Saturation', 'Brightness', 'Shuffle'),
+						}
+					)
+
 	resolutionX = 1920
 	resolutionY = 1080
 
-	unsplash = True
+	use_unsplash = True
 
-	if unsplash:
+	if use_unsplash:
 		selected_file = unsplash.save()
 	else:
 		
@@ -50,6 +58,17 @@ def generate_command():
 
 	# Pick random options
 	selected_options = {}
+	selected_sort_choice = {}
+
+	# pick the sort method
+	sort_choice = random.choice(sort_option)
+	if '--interleave' in sort_choice.keys():
+		selected_sort_choice['--interleave'] = (random.choice(sort_choice['--interleave']) + 
+											' ' + random.choice(sort_choice['--interleave']))
+	else:
+		selected_sort_choice['--sort'] = random.choice(sort_choice['--sort'])
+
+	# add addition options
 	for key in options.keys():
 		selected_options[key] = random.choice(options[key])
 
@@ -68,6 +87,10 @@ def generate_command():
 					out_file]
 				
 	# Add the options
+	for key in selected_sort_choice.keys():
+		run_command.append(key)
+		run_command.append(str(selected_sort_choice[key]))
+
 	for key in selected_options.keys():
 		run_command.append(key)
 		run_command.append(str(selected_options[key]))
@@ -80,13 +103,14 @@ def generate_command():
 			record_file.write(item + ' ')
 		record_file.write('\n')
 
+	run_command = ' '.join(run_command)
 	return run_command
 		
 
 
 if __name__ == '__main__':
 	
-	away = True
+	away = False
 
 	if away:
 		java_folder = "C:\\Software\\GitHub\\ColourSorter\\out\\production\\ColourSorter"
