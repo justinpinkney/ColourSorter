@@ -1,11 +1,18 @@
-ColourSorter takes a picture and rearranges the pixels to make another.
+# Colour Sorter
+_ColourSorter takes a picture and rearranges the pixels to make another._
 
-The algorithm was inspired by József Fejes's
-[all RGB sorting](http://joco.name/2014/03/02/all-rgb-colors-in-one-image/),
-some details on an earlier version noted in an
-[old blog post](http://www.cutsquash.com/2014/03/photo-colour-sorting/).
+This Java application implements an algorithm to take all the pixels from an
+image and use them to make a new image, based on a (sort of) sorting algorithm.
+This was all inspired by József Fejes's
+[all RGB sorting](http://joco.name/2014/03/02/all-rgb-colors-in-one-image/).
 
-## Some examples
+## Usage
+TODO
+
+## Algorithm
+TODO
+
+## Examples
 ![](images/0.jpg)
 ![](images/1.jpg)
 ![](images/2.jpg)
@@ -18,4 +25,3 @@ some details on an earlier version noted in an
 ![](images/9.jpg)
 ![](images/10.jpg)
 ![](images/11.jpg)
-
