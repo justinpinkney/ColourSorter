@@ -1,3 +1,5 @@
+![](images/ColourSorterLogo.jpg)
+
 # ColourSorter
 _ColourSorter takes a picture and rearranges the pixels to make another._
 
